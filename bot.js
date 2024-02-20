@@ -2,9 +2,8 @@ const TelegramBot = require('node-telegram-bot-api');
 const config = require('./config');
 const cron = require('node-cron');
 
-// const { readMscTrips } = require('./readDailyMsc');
+
 // const { searchAllMscTrips } = require('./readAllMscTrips');
-// const { processPDF } = require('./pdf');
 // const { readDailyTrips } = require('./readDailyTrips');
 // const { readTomorrowTrips } = require('./tomorrowTrips');
 
@@ -98,7 +97,7 @@ bot.onText(/\/alltrips/, async (msg) => {
 //   });
 // });
 
-//WORKING**
+// WORKING**
 // bot.onText(/\/trip/, async (msg) => {
 //   const chatId = msg.chat.id;
 
