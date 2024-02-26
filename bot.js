@@ -49,15 +49,15 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 
-// // Start the cron job for daily news posting at X
-// cron.schedule('58 09 * * *', () => {
-//   fetchAndPostNews(bot, targetGroupChatId);
-// });
+// Start the cron job for daily news posting at X
+cron.schedule('56 12 * * *', () => {
+  fetchAndPostNews(bot, targetGroupChatId);
+});
 
-// // Start the cron job for daily motivational quote posting at X
-// cron.schedule('58 09 * * *', () => {
-//   motivationalQuote(bot, targetGroupChatId);
-// });
+// Start the cron job for daily motivational quote posting at X
+cron.schedule('56 12 * * *', () => {
+  motivationalQuote(bot, targetGroupChatId);
+});
 
 // // Schedule the script to run at a specific time every day at X
 // cron.schedule('07 10 * * *', async () => {
