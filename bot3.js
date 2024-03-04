@@ -1,6 +1,6 @@
-// Import necessary modules
 const TelegramBot = require('node-telegram-bot-api');
 const config = require('./config');
+const { captureAndSendDailyRecapScreenshot2 } = require('./dailyRecapScreenshot2');
 const { captureAndSendGoogleSheetScreenshot } = require('./scheduleScreenshot');
 const { readAllTrips } = require('./readAllTrips');
 const { sendContactsToTelegram } = require('./contacts');
@@ -41,12 +41,13 @@ const handleRateLimitedRequest = (func) => {
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
 
-  // Define the inline keyboard markup with three buttons
+  // Define the inline keyboard markup with four buttons
   const keyboardMarkup = {
     inline_keyboard: [
       [{ text: 'Upcoming Trips', callback_data: 'alltrips' }],
       [{ text: 'Transport Schedule', callback_data: 'captureschedule' }],
-      [{ text: 'Important Contacts', callback_data: 'fetchcontacts' }] // New button for fetching contacts
+      [{ text: 'Important Contacts', callback_data: 'fetchcontacts' }],
+      [{ text: 'Capture Sheet Screenshot', callback_data: 'capturesheet' }] // New button for capturing sheet screenshot
     ]
   };
 
@@ -74,9 +75,8 @@ bot.on('callback_query', async (callbackQuery) => {
       });
       break;
     case 'captureschedule':
-      handleRateLimitedRequest(() => {
-        captureAndSendGoogleSheetScreenshot(bot, targetGroupChatId); // Use targetGroupChatId instead of config.chatId
-      });
+      // Call the function to capture and send Google Sheet screenshots
+      captureAndSendGoogleSheetScreenshot(bot, targetGroupChatId);
       break;
     case 'fetchcontacts':
       // Handle 'fetchcontacts' action
@@ -96,6 +96,10 @@ bot.on('callback_query', async (callbackQuery) => {
       } catch (error) {
         console.error('Error sending contacts:', error);
       }
+      break;
+    case 'capturesheet':
+      // Call the function to capture and send Google Sheet screenshots
+      captureAndSendDailyRecapScreenshot2(bot, targetGroupChatId);
       break;
     default:
       console.log('Invalid action:', action);
