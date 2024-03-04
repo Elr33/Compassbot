@@ -3,7 +3,7 @@ const config = require('./config');
 const { captureAndSendGoogleSheetScreenshot2 } = require('./dailyRecapScreenshot');
 const { captureAndSendGoogleSheetScreenshot } = require('./scheduleScreenshot');
 const { captureAndSendDailyRecapScreenshot } = require('./dailyRecapScreenshot2'); // Import the new function
-
+const { sendContactsToTelegram } = require('./contacts');
 
 // Create a new Telegram bot instance
 const bot = new TelegramBot(config.telegramToken, { polling: true });

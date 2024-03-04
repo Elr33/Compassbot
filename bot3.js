@@ -1,8 +1,9 @@
 const TelegramBot = require('node-telegram-bot-api');
 const config = require('./config');
-const { captureAndSendGoogleSheetScreenshot2 } = require('./dailyRecapScreenshot');
+const { captureAndSendDailyRecapScreenshot2 } = require('./dailyRecapScreenshot2');
 const { captureAndSendGoogleSheetScreenshot } = require('./scheduleScreenshot');
 const { readAllTrips } = require('./readAllTrips');
+const { sendContactsToTelegram } = require('./contacts');
 
 // Create a new Telegram bot instance
 const bot = new TelegramBot(config.telegramToken, { polling: true });
@@ -98,7 +99,7 @@ bot.on('callback_query', async (callbackQuery) => {
       break;
     case 'capturesheet':
       // Call the function to capture and send Google Sheet screenshots
-      captureAndSendGoogleSheetScreenshot2(bot, targetGroupChatId);
+      captureAndSendDailyRecapScreenshot2(bot, targetGroupChatId);
       break;
     default:
       console.log('Invalid action:', action);
