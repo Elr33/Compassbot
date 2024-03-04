@@ -44,9 +44,9 @@ bot.onText(/\/start/, (msg) => {
   // Define the inline keyboard markup with three buttons
   const keyboardMarkup = {
     inline_keyboard: [
-      [{ text: 'All Upcoming Trips', callback_data: 'alltrips' }],
-      [{ text: 'Tomorrows Transport Schedule', callback_data: 'captureschedule' }],
-      [{ text: 'Fetch Contacts', callback_data: 'fetchcontacts' }] // New button for fetching contacts
+      [{ text: 'Upcoming Trips', callback_data: 'alltrips' }],
+      [{ text: 'Transport Schedule', callback_data: 'captureschedule' }],
+      [{ text: 'Important Contacts', callback_data: 'fetchcontacts' }] // New button for fetching contacts
     ]
   };
 

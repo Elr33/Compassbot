@@ -135,7 +135,7 @@ bot.onText(/\/alltrips/, async (msg) => {
 // });
 
 // Define the delay between polling cycles in milliseconds
-const pollingDelay = 10000; // 10 seconds
+const pollingDelay = 1000; // 1 seconds
 
 // Function to start polling with a delay between each cycle
 const startPollingWithDelay = () => {

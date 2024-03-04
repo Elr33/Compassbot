@@ -3,7 +3,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const config = require('./config');
 
 // Initialize Telegram Bot
-const bot = new TelegramBot(config.telegramToken, { username: 'CompassG_bot', polling: true });
+const bot = new TelegramBot(config.telegramToken, { username: 'CompassG_bot', polling: false });
 
 // Define the target group chat ID
 const targetGroupChatId = '-1002128280650';
