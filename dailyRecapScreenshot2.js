@@ -1,3 +1,25 @@
+const TelegramBot = require('node-telegram-bot-api');
+const config = require('./config');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const fs = require('fs');
+const { searchVesselImage } = require('./vesselImageSearch');
+
+puppeteer.use(StealthPlugin());
+
+// Load the Google Sheet
+const doc = new GoogleSpreadsheet(config.googleSheetId2);
+
+// Define the row indices for each section heading
+const HEADINGS = [
+    { title: 'Vessel Port Call Details', startRow: 3, endRow: 14 },
+    { title: 'Compass Maritime Husbandry Appointment Details', startRow: 15, endRow: 23 },
+    { title: 'Launch Boat Schedule', startRow: 24, endRow: 38 },
+    { title: 'In Port Crew Change Details', startRow: 39, endRow: 52 },
+    { title: 'Berthing Prospects', startRow: 53, endRow: 57 }
+];
+
 const captureAndSendDailyRecapScreenshot2 = async () => {
     try {
         // Authenticate with Google Sheets API using your existing code
@@ -20,39 +42,39 @@ const captureAndSendDailyRecapScreenshot2 = async () => {
         for (const sheet of doc.sheetsByIndex) {
             await sheet.loadCells();
 
-            // Create an HTML layout with vessel image above all information
+            // Create an HTML layout with company logo on the top left
             let htmlContent = '';
 
             // Search for vessel image based on IMO number
             const vesselImageURL = await searchVesselImage(sheet.getCell(6, 1).value); // IMO number at B7
 
-            // Add vessel image if available
+            // Add vessel image above the main heading
             if (vesselImageURL) {
-                // Add the vessel image with specified size and margin
-                htmlContent += `<div style="margin-bottom: 20px; text-align: center;"><img src="${vesselImageURL}" style="max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"></div>`;
+                htmlContent += `<div style="text-align: center;"><img src="${vesselImageURL}" style="max-width: 800px; height: auto; margin-bottom: 40px;"></div>`;
             }
 
             // Add dynamic date header
             const currentDate = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
-            htmlContent += `<h1 style="text-align: center; font-size: 32px; font-weight: bold; margin-bottom: 20px;">Daily Operational Recap Generated on ${currentDate}</h1>`;
+            htmlContent += `<h1 style="text-align: center; font-size: 48px; font-weight: bold; margin-bottom: 40px;">Daily Operational Recap Generated on ${currentDate}</h1>`;
 
             // Create an HTML table to display the data
-            htmlContent += '<table style="width: 100%; border-collapse: collapse; border: 1px solid #ccc;">';
+            htmlContent += '<table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 36px;">';
 
-            // Add headings
+            // Add headings and information rows
             for (const heading of HEADINGS) {
-                htmlContent += `<tr><th colspan="2" style="background-color: #007bff; color: white; text-align: center; font-size: 24px; font-weight: bold; padding: 10px;">${heading.title}</th></tr>`;
+                htmlContent += `<tr><th colspan="2" style="background-color: #007bff; color: white; text-align: center; font-size: 42px; font-weight: bold; padding: 10px;">${heading.title}</th></tr>`;
 
                 // Add rows within the specified range for each section
+                let isLightBlueBackground = false;
                 for (let i = heading.startRow; i <= heading.endRow; i++) {
-                    htmlContent += '<tr>';
+                    htmlContent += `<tr style="background-color: ${isLightBlueBackground ? '#f0f8ff' : 'white'};">`;
                     for (let j = 0; j < 2; j++) {
                         const cell = sheet.getCell(i, j);
-                        const fontSize = j === 0 ? '24px' : '20px';
                         const fontWeight = j === 0 ? 'bold' : 'normal';
-                        htmlContent += `<td style="padding: 10px; font-size: ${fontSize}; font-weight: ${fontWeight};">${cell.value}</td>`;
+                        htmlContent += `<td style="padding: 10px; font-weight: ${fontWeight};">${cell.value}</td>`;
                     }
                     htmlContent += '</tr>';
+                    isLightBlueBackground = !isLightBlueBackground; // Toggle background color
                 }
             }
 
@@ -84,4 +106,8 @@ const captureAndSendDailyRecapScreenshot2 = async () => {
     } catch (error) {
         console.error('Error capturing and sending Daily Recap screenshots:', error);
     }
+};
+
+module.exports = {
+    captureAndSendDailyRecapScreenshot2,
 };
