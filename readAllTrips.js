@@ -39,8 +39,10 @@ async function readAllTrips(bot, targetGroupChatId) {
       for (const row of rows) {
         console.log('Processing Row:', row);
         const time = row.TIME;
+        const agent = row['AGENT'];
         const flightNumber = row['FLIGHT NO'];
         const pickupLocation = row['PICK UP'];
+        const immigration = row['IMMIGRATION'];
         const dropoffLocation = row['DROP OFF'];
         const client = row.CLIENT;
         const vessel = row.VESSEL;
@@ -49,8 +51,6 @@ async function readAllTrips(bot, targetGroupChatId) {
         const port = row.PORT;
         const berth = row.BERTH;
         const logsReceived = row['LOGS RECEIVED'];
-        const passportReceived = row['PASSPORT RECEIVED'];
-        const seamansReceived = row['SEAMANS RECEIVED'];
         const permissionsReceived = row['PERMISSIONS RECEIVED'];
 
         // Exclude undefined trips
@@ -72,18 +72,18 @@ async function readAllTrips(bot, targetGroupChatId) {
 
           const tripDetails = `
             Date: ${tripDate}
+            Agent: ${agent}
             Time: ${time}
             Flight: ${flightNumber}
             Pickup: ${pickupLocation}
+            Immigration: ${immigration}
             Drop-off: ${dropoffLocation}
             Client: ${client}
             Remarks: ${additionalTripDetails}
             Port: ${port}
             Berth: ${berth}
-            Logs Received: ${logsReceived}
-            Passport Received: ${passportReceived}
-            Seamans Received: ${seamansReceived}
-            Permissions Received: ${permissionsReceived}`;
+            Logs: ${logsReceived}
+            Permissions : ${permissionsReceived}`;
 
           const normalizedTripDetails = tripDetails.replace(/\b\w/g, (c) => c.toUpperCase()); // Capitalize first letter of each word
 

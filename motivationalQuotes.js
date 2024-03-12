@@ -3,7 +3,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const config = require('./config');
 const cron = require('node-cron');
 
-const bot = new TelegramBot(config.telegramToken, { username: 'CompassG_bot', polling: true });
+const bot = new TelegramBot(config.telegramToken, { username: 'CompassG_bot', polling: false });
 const targetGroupChatId = '-1001635794980';
 
 const motivationalQuote = async (bot, targetGroupChatId) => {
