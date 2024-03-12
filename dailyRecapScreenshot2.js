@@ -13,11 +13,11 @@ const doc = new GoogleSpreadsheet(config.googleSheetId2);
 
 // Define the row indices for each section heading
 const HEADINGS = [
-    { title: 'Vessel Port Call Details', startRow: 3, endRow: 14 },
-    { title: 'Compass Maritime Husbandry Appointment Details', startRow: 15, endRow: 23 },
-    { title: 'Launch Boat Schedule', startRow: 24, endRow: 38 },
-    { title: 'In Port Crew Change Details', startRow: 39, endRow: 52 },
-    { title: 'Berthing Prospects', startRow: 53, endRow: 57 }
+    { title: 'Vessel Port Call Details', startRow: 4, endRow: 13 },
+    { title: 'Compass Maritime Husbandry Appointment Details', startRow: 14, endRow: 21 },
+    { title: 'Launch Boat Schedule', startRow: 22, endRow: 35 },
+    { title: 'In Port Crew Change Details', startRow: 36, endRow: 48 },
+    { title: 'Berthing Prospects', startRow: 49, endRow: 52 }
 ];
 
 const captureAndSendDailyRecapScreenshot2 = async () => {
@@ -45,10 +45,13 @@ const captureAndSendDailyRecapScreenshot2 = async () => {
             // Create an HTML layout with company logo on the top left
             let htmlContent = '';
 
+            // Add company logo at the top left
+            htmlContent += `<div style="position: absolute; top: 10px; left: 10px;"><img src="${config.companyLogoURL}" style="height: 50px; width: auto;"></div>`;
+
             // Search for vessel image based on IMO number
             const vesselImageURL = await searchVesselImage(sheet.getCell(6, 1).value); // IMO number at B7
 
-            // Add vessel image above the main heading
+            // Add vessel image in the middle
             if (vesselImageURL) {
                 htmlContent += `<div style="text-align: center;"><img src="${vesselImageURL}" style="max-width: 800px; height: auto; margin-bottom: 40px;"></div>`;
             }
@@ -62,19 +65,36 @@ const captureAndSendDailyRecapScreenshot2 = async () => {
 
             // Add headings and information rows
             for (const heading of HEADINGS) {
-                htmlContent += `<tr><th colspan="2" style="background-color: #007bff; color: white; text-align: center; font-size: 42px; font-weight: bold; padding: 10px;">${heading.title}</th></tr>`;
-
-                // Add rows within the specified range for each section
-                let isLightBlueBackground = false;
+                // Check if any row within the range has data
+                let hasData = false;
                 for (let i = heading.startRow; i <= heading.endRow; i++) {
-                    htmlContent += `<tr style="background-color: ${isLightBlueBackground ? '#f0f8ff' : 'white'};">`;
-                    for (let j = 0; j < 2; j++) {
-                        const cell = sheet.getCell(i, j);
-                        const fontWeight = j === 0 ? 'bold' : 'normal';
-                        htmlContent += `<td style="padding: 10px; font-weight: ${fontWeight};">${cell.value}</td>`;
+                    const cell1 = sheet.getCell(i, 0);
+                    const cell2 = sheet.getCell(i, 1);
+                    if (cell1.value || cell2.value) {
+                        hasData = true;
+                        break;
                     }
-                    htmlContent += '</tr>';
-                    isLightBlueBackground = !isLightBlueBackground; // Toggle background color
+                }
+
+                // Add section only if it has data
+                if (hasData) {
+                    htmlContent += `<tr><th colspan="2" style="background-color: #007bff; color: white; text-align: center; font-size: 42px; font-weight: bold; padding: 10px;">${heading.title}</th></tr>`;
+
+                    // Add rows within the specified range for each section
+                    let isLightBlueBackground = false;
+                    for (let i = heading.startRow; i <= heading.endRow; i++) {
+                        const cell1 = sheet.getCell(i, 0);
+                        const cell2 = sheet.getCell(i, 1);
+                        // Only add rows with data
+                        if (cell1.value || cell2.value) {
+                            htmlContent += `<tr style="background-color: ${isLightBlueBackground ? '#f0f8ff' : 'white'};">`;
+                            const fontWeight = 'bold';
+                            htmlContent += `<td style="padding: 10px; font-weight: ${fontWeight};">${cell1.value}</td>`;
+                            htmlContent += `<td style="padding: 10px; font-weight: ${fontWeight};">${cell2.value}</td>`;
+                            htmlContent += '</tr>';
+                            isLightBlueBackground = !isLightBlueBackground; // Toggle background color
+                        }
+                    }
                 }
             }
 
