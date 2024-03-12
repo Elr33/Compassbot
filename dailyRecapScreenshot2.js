@@ -13,11 +13,11 @@ const doc = new GoogleSpreadsheet(config.googleSheetId2);
 
 // Define the row indices for each section heading
 const HEADINGS = [
-    { title: 'Vessel Port Call Details', startRow: 4, endRow: 13 },
-    { title: 'Compass Maritime Husbandry Appointment Details', startRow: 14, endRow: 21 },
-    { title: 'Launch Boat Schedule', startRow: 22, endRow: 35 },
-    { title: 'In Port Crew Change Details', startRow: 36, endRow: 48 },
-    { title: 'Berthing Prospects', startRow: 49, endRow: 52 }
+    { title: 'Vessel Port Call Details', startRow: 4, endRow: 14 },
+    { title: 'Compass Maritime Husbandry Appointment Details', startRow: 15, endRow: 23 },
+    { title: 'Launch Boat Schedule', startRow: 24, endRow: 38 },
+    { title: 'In Port Crew Change Details', startRow: 39, endRow: 52 },
+    { title: 'Berthing Prospects', startRow: 53, endRow: 57 }
 ];
 
 const captureAndSendDailyRecapScreenshot2 = async () => {
@@ -45,8 +45,10 @@ const captureAndSendDailyRecapScreenshot2 = async () => {
             // Create an HTML layout with company logo on the top left
             let htmlContent = '';
 
-            // Add company logo at the top left
-            htmlContent += `<div style="position: absolute; top: 10px; left: 10px;"><img src="${config.companyLogoURL}" style="height: 50px; width: auto;"></div>`;
+            // Add company logo at the top left if the URL is provided
+            if (config.companyLogoURL) {
+                htmlContent += `<div style="position: absolute; top: 10px; left: 10px;"><img src="${config.companyLogoURL}" style="height: 50px; width: auto;"></div>`;
+            }
 
             // Search for vessel image based on IMO number
             const vesselImageURL = await searchVesselImage(sheet.getCell(6, 1).value); // IMO number at B7
@@ -109,7 +111,7 @@ const captureAndSendDailyRecapScreenshot2 = async () => {
             const screenshotPath = `./images/sheet_${sheet.title}_screenshot.png`;
             await page.screenshot({ path: screenshotPath, fullPage: true });
 
-            // Send the screenshot to the Telegram group
+            // Send the screenshot to the Telegram group if it exists
             if (fs.existsSync(screenshotPath)) {
                 bot.sendPhoto(config.chatId, fs.readFileSync(screenshotPath));
                 console.log(`Daily Recap screenshot for ${sheet.title} sent successfully.`);
